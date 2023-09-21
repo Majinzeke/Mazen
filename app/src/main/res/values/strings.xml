@@ -6,7 +6,7 @@
     <string name="article_post_min_read">aritcle</string>
     <string name="tab_inbox">Home\n</string>
     <string name="tab_article">Profile\n</string>
-    <string name="align_your_body">Align your Body</string>
+    <string name="align_your_body">Workouts</string>
     <string name="ab1_inversions">Inversions</string>
     <string name="ab2_quick_yoga">Quick yoga</string>
     <string name="ab3_stretching">Stretching</string>
@@ -23,5 +23,6 @@
     <string name="bottom_navigation_home">Home</string>
     <string name="bottom_navigation_profile">Profile</string>
     <string name="placeholder_search">Search</string>
-    <string name="favorite_collections">favorites\n</string>
+    <string name="favorite_collections">Health Articles\n</string>
+    <string name="profile">Profile\n</string>
 </resources>
