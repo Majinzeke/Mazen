@@ -25,7 +25,11 @@ fun MazenNavHost(
             HomeScreen()
         }
         composable(route = Profile.route) {
-            ProfileScreen()
+            ProfileScreen(
+                onGoBack = {
+
+                }
+            )
         }
         composable(route = Settings.route) {
             SettingsScreen()
