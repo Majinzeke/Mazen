@@ -23,7 +23,9 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.navigation.Home
 import com.mz.mazen.navigation.MazenNavHost
 import com.mz.mazen.navigation.MazenNavigationActions
@@ -48,6 +51,7 @@ fun MazenApp(){
     MazenTheme {
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
+        var detectedPose by remember { mutableStateOf<Pose?>(null) }
         val currentDestination = currentBackStack?.destination
         val currentScreen =
             mazenTabRowScreens.find { it.route == currentDestination?.route } ?: Home
@@ -71,6 +75,7 @@ fun MazenApp(){
         }
     }
 }
+
 
 
 @Composable
@@ -142,6 +147,7 @@ private fun MazenTab(
         }
     }
 }
+
 
 private val TabHeight = 56.dp
 private const val InactiveTabOpacity = 0.60f

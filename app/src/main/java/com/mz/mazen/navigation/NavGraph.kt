@@ -27,7 +27,7 @@ fun MazenNavHost(
         composable(route = Profile.route) {
             ProfileScreen(
                 onGoBack = {
-
+                    navController.navigate(Home.route)
                 }
             )
         }

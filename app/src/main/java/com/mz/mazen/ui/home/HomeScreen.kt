@@ -71,7 +71,7 @@ fun SearchBar(
             focusedContainerColor = MaterialTheme.colorScheme.surface
         ),
         placeholder = {
-            Text(stringResource(R.string.ab1_inversions))
+            Text(stringResource(R.string.workout_1))
 
         },
         modifier = modifier
@@ -150,7 +150,7 @@ fun AlignYourBodyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier
     ) {
-        items(alignYourBodyData) { item ->
+        items(onlineWorkoutData) { item ->
             AlignYourBodyElement(item.drawable, item.text)
         }
     }
@@ -169,7 +169,7 @@ fun FavoriteCollectionsGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.height(168.dp)
     ) {
-        items(favoriteCollectionsData) { item ->
+        items(onlineArticleData) { item ->
             FavoriteCollectionCard(item.drawable, item.text, Modifier.height(80.dp))
         }
     }
@@ -223,16 +223,22 @@ fun HomeScreen(
 // Step: Bottom navigation - Material
 
 
-private val alignYourBodyData = listOf(
+private val onlineWorkoutData = listOf(
+
+    R.drawable.ab1_inversions to R.string.workout_1,
+    R.drawable.ab3_stretching to R.string.workout_2,
+    R.drawable.ab4_tabata to R.string.workout_3,
+    R.drawable.ab5_hiit to R.string.workout_4
 
 
-    R.drawable.ab1_inversions to R.string.ab1_inversions
 ).map { DrawableStringPair(it.first, it.second) }
 
-private val favoriteCollectionsData = listOf(
+private val onlineArticleData = listOf(
 
     R.drawable.fc1_short_mantras to R.string.fc1_short_mantras,
     R.drawable.fc2_nature_meditations to R.string.fc2_nature_meditations,
+    R.drawable.fc3_stress_and_anxiety to R.string.fc3_stress_and_anxiety,
+    R.drawable.fc4_self_massage to R.string.fc4_self_massage,
 
 ).map { DrawableStringPair(it.first, it.second) }
 
