@@ -1,7 +1,6 @@
 package com.mz.mazen.ui.settings
 
 import android.content.Context
-import android.media.FaceDetector
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
@@ -10,15 +9,14 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,29 +45,14 @@ import com.google.mlkit.vision.pose.PoseLandmark
 @Composable
 fun SettingsScreen(
 
-){
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
-    var cameraLens by remember { mutableStateOf(CameraSelector.LENS_FACING_FRONT) }
-    var sourceInfo by remember { mutableStateOf(SourceInfo(10, 10, false)) }
-    var detectedFaces by remember { mutableStateOf<List<FaceDetector.Face>>(emptyList()) }
-    var detectedPose by remember { mutableStateOf<Pose?>(null) }
-    val previewView = remember { PreviewView(context) }
-    val cameraProvider = remember(sourceInfo, cameraLens) {
-        ProcessCameraProvider.getInstance(context)
-            .configureCamera(
-                previewView, lifecycleOwner, cameraLens, context,
-                setSourceInfo = { sourceInfo = it },
-                onPoseDetected = { detectedPose = it }
-            )
-    }
-    Column(
-        verticalArrangement = Arrangement.Center
-    ) {
-        ///DetectedPose(pose = detectedPose, sourceInfo = sourceInfo)
-        CameraPreview(previewView)
-        DetectedPose(pose = detectedPose, sourceInfo = sourceInfo)
-    }
+) {
+    var lens by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }
+    CameraPreview(
+        cameraLens = lens
+    )
+    Controls(
+        onLensChange = { lens = switchLens(lens) }
+    )
 }
 
 @Composable

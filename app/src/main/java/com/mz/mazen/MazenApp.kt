@@ -2,6 +2,7 @@ package com.mz.mazen
 
 
 import android.annotation.SuppressLint
+import androidx.camera.core.CameraSelector
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
@@ -55,6 +56,9 @@ fun MazenApp(){
         val currentDestination = currentBackStack?.destination
         val currentScreen =
             mazenTabRowScreens.find { it.route == currentDestination?.route } ?: Home
+        var lens by remember { mutableStateOf(CameraSelector.LENS_FACING_FRONT) }
+
+
 
         Scaffold(
             topBar = {
