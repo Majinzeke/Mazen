@@ -8,11 +8,9 @@ Welcome to Mazen, your ultimate personal trainer app powered by Google's machine
 
 - **Customized Workout Plans**: Mazen uses Google's machine learning to create personalized workout plans tailored to your fitness level, goals, and preferences.
 
-- **Nutritional Guidance**: Get expert nutritional recommendations to complement your workout routine and optimize your results.
+- **Pose Detection**: Mazen uses Google's machine learning to check your form on exercises.
 
 - **Progress Tracking**: Easily track your progress, set milestones, and visualize your journey toward a healthier you.
-
-- **Virtual Coach**: Receive real-time feedback and guidance during your workouts to ensure proper form and maximize effectiveness.
 
 - **Community Support**: Connect with a community of like-minded individuals, share your achievements, and stay motivated together.
 
