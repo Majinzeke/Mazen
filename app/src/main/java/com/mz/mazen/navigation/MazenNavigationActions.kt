@@ -21,28 +21,30 @@ import com.mz.mazen.R
 interface MazenNavigationActions {
     val icon: ImageVector
     val route:String
+
+    object Home : MazenNavigationActions {
+        override val icon = Icons.Filled.Home
+        override val route = "home"
+    }
+    object Profile : MazenNavigationActions {
+        override val icon = Icons.Filled.Person
+        override val route = "profile"
+    }
+    object Settings : MazenNavigationActions {
+        override val icon = Icons.Filled.Settings
+        override val route = "settings"
+    }
+    object WorkoutLog : MazenNavigationActions {
+        override val icon = Icons.Filled.SportsGymnastics
+        override val route = "workout_log"
+        const val workoutTypeArg = "workout_type"
+        val arguments = listOf(
+            navArgument(workoutTypeArg) {type= NavType.StringType}
+        )
+    }
+
 }
 
-object Home : MazenNavigationActions {
-    override val icon = Icons.Filled.Home
-    override val route = "home"
-}
-object Profile : MazenNavigationActions {
-    override val icon = Icons.Filled.Person
-    override val route = "profile"
-}
-object Settings : MazenNavigationActions {
-    override val icon = Icons.Filled.Settings
-    override val route = "settings"
-}
-object WorkoutLog : MazenNavigationActions {
-    override val icon = Icons.Filled.SportsGymnastics
-    override val route = "settings"
-    const val workoutTypeArg = "workout_type"
-    val arguments = listOf(
-        navArgument(workoutTypeArg) {type= NavType.StringType}
-    )
-}
 
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {
@@ -61,4 +63,9 @@ fun NavHostController.navigateSingleTopTo(route: String) =
         restoreState = true
     }
 
-val mazenTabRowScreens = listOf(Home, Profile, Settings,WorkoutLog)
+val mazenTabScreens = listOf(
+    MazenNavigationActions.Home,
+    MazenNavigationActions.Profile,
+    MazenNavigationActions.Settings,
+    MazenNavigationActions.WorkoutLog
+)

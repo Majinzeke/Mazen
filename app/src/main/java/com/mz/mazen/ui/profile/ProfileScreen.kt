@@ -28,11 +28,11 @@ import com.mz.mazen.data.model.ProfileModel
 import com.mz.mazen.ui.settings.SettingsScreen
 
 const val username = "majinzeke"
-const val my_description = "A group of simple, open source Android apps without ads and unnecessary permissions, with materials design UI."
+const val my_description = "Profile to show progress on workouts and weightloss."
 val profilePopularList = listOf(
-    ProfileModel("Jetpack-Compose-UI", "A Collection on all Jetpack compose UI Layouts and Demo screens to see it's potential", "25", "Kotlin"),
-    ProfileModel("Leaf-Explorer", "File Manager, File Sharing & Music Player App for Android", "9", "Kotlin"),
-    ProfileModel("DayNight-Theme", "A Material Design-based Theme Management System for Android Jetpack Compose.", "45", "Kotlin")
+    ProfileModel("Upper Body Workout", "A collection on upper body workouts", "25", "Kotlin"),
+    ProfileModel("Lower Body Workout", "A collection on lower body workouts", "9", "Kotlin"),
+    ProfileModel("Core Workout", "A collection on core workouts.", "45", "Kotlin")
 )
 
 val imageTextList = listOf(
