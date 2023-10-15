@@ -20,12 +20,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.navigation.Home
-import com.mz.mazen.navigation.MazenNavigationActions
 import com.mz.mazen.navigation.SetupNavGraph
 import com.mz.mazen.navigation.mazenTabScreens
 import com.mz.mazen.navigation.navigateSingleTopTo
-import com.mz.mazen.ui.components.MazenTabRow
 import com.mz.mazen.ui.theme.MazenTheme
+import com.mz.mazen.utils.MazenTabRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
