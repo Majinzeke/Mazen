@@ -1,9 +1,9 @@
 package com.mz.mazen.data.model
 
-import com.mz.mazen.ui.profile.DCodeIcon
+import com.mz.mazen.ui.profile.MzIcon
 
 data class FeatureList(
     val name: String,
-    val listIcon: DCodeIcon,
+    val listIcon: MzIcon,
     val githubUrl: String
 )

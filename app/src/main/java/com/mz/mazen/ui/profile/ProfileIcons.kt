@@ -38,7 +38,7 @@ object MyIcons {
 /**
  * A sealed class to make dealing with [ImageVector] and [DrawableRes] icons easier.
  */
-sealed class DCodeIcon {
-    data class ImageVectorIcon(val imageVector: ImageVector) : DCodeIcon()
-    data class DrawableResourceIcon(@DrawableRes val id: Int) : DCodeIcon()
+sealed class MzIcon {
+    data class ImageVectorIcon(val imageVector: ImageVector) : MzIcon()
+    data class DrawableResourceIcon(@DrawableRes val id: Int) : MzIcon()
 }

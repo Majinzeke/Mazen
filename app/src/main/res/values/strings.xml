@@ -29,4 +29,11 @@
     <string name="txt_profile">Profile</string>
     <string name="txt_more_options">More Options</string>
     <string name="friends_list">Freinds list\n</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="user_id">User Id</string>
+    <string name="display_name">Display Name</string>
+    <string name="profile_error">Profile Error..</string>
+    <string name="textfield_desc">Description</string>
+    <string name="textfield_hint">Hint</string>
 </resources>

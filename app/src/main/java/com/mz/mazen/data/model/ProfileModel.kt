@@ -1,6 +1,6 @@
 package com.mz.mazen.data.model
 
-import com.mz.mazen.ui.profile.DCodeIcon
+import com.mz.mazen.ui.profile.MzIcon
 
 data class ProfileModel(
     val name: String,
@@ -10,7 +10,7 @@ data class ProfileModel(
 )
 
 data class ImageTextList(
-    val icon: DCodeIcon,
+    val icon: MzIcon,
     val text: String
 )
 

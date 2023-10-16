@@ -16,9 +16,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mz.mazen.R
 import com.mz.mazen.ui.etrainer.eTrainerScreen
 import com.mz.mazen.ui.home.HomeScreen
 import com.mz.mazen.ui.profile.ProfileScreen
+import com.mz.mazen.ui.profile.ProfileUiState
 import com.mz.mazen.ui.settings.SettingsScreen
 import com.mz.mazen.ui.theme.MazenTheme
 
@@ -46,9 +48,14 @@ fun SetupNavGraph(
         }
         composable(route = Profile.route){
             ProfileScreen(
-                onGoBack = {
-
-                }
+                userData = ProfileUiState(
+                    firstName = "",
+                    lastName = "",
+                    userId = "",
+                    displayName = "",
+                    position = "",
+                    photo = R.drawable.ic_launcher_background
+                )
             )
         }
         composable(route = Settings.route){

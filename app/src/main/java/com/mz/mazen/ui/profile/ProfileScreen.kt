@@ -1,461 +1,283 @@
 package com.mz.mazen.ui.profile
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Height
+import androidx.compose.material.icons.filled.MonitorWeight
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Person2
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mz.mazen.R
-import com.mz.mazen.data.model.FeatureList
-import com.mz.mazen.data.model.ImageTextList
-import com.mz.mazen.data.model.ProfileModel
-import com.mz.mazen.ui.settings.SettingsScreen
+import com.mz.mazen.utils.baselineHeight
 
-const val username = "majinzeke"
-const val my_description = "Profile to show progress on workouts and weightloss."
-val profilePopularList = listOf(
-    ProfileModel("Upper Body Workout", "A collection on upper body workouts", "25", "Kotlin"),
-    ProfileModel("Lower Body Workout", "A collection on lower body workouts", "9", "Kotlin"),
-    ProfileModel("Core Workout", "A collection on core workouts.", "45", "Kotlin")
-)
-
-val imageTextList = listOf(
-    ImageTextList(DCodeIcon.ImageVectorIcon(MyIcons.Location),"vista"),
-    ImageTextList(DCodeIcon.ImageVectorIcon(MyIcons.Email),"yup@gmail.com"),
-    ImageTextList(DCodeIcon.ImageVectorIcon(MyIcons.AccountBox), "hii")
-)
-
-val moreOptionsList = listOf(
-    FeatureList("Edit Profile", DCodeIcon.ImageVectorIcon(MyIcons.Edit), ""),
-    FeatureList("Manage Account", DCodeIcon.ImageVectorIcon(MyIcons.AccountBox), ""),
-    FeatureList("Privacy Policy", DCodeIcon.DrawableResourceIcon(MyIcons.Policy), ""),
-    FeatureList("About", DCodeIcon.ImageVectorIcon(MyIcons.Info), ""),
-    FeatureList("Help & Feedback", DCodeIcon.DrawableResourceIcon(MyIcons.AppIcon), ""),
-    FeatureList("Share 'code'", DCodeIcon.ImageVectorIcon(MyIcons.Share), ""),
-)
-
-
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ProfileScreen(onGoBack: () -> Unit) {
-
-
-    Scaffold(
-        modifier = Modifier.semantics {
-            testTagsAsResourceId = true
-        },
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(id = R.string.txt_profile))
-                },
-                navigationIcon = {
-                    IconButton(onClick = onGoBack) {
-                        Icon(MyIcons.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(MyIcons.Search, contentDescription = "Search")
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(MyIcons.MoreVert, contentDescription = "More")
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Transparent,
-                ),
-            )
-        }
-    ) { padding ->
-
-        ProfileContent(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(padding)
-        ) {
-            TopProfileLayout()
-            MainProfileContent()
-            FooterContent()
-        }
-    }
-}
-
-@Composable
-fun ProfileContent(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+fun ProfileScreen(
+    userData: ProfileUiState,
+    nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection()
 ) {
-    Column(modifier) {
-        content()
-    }
-}
+    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun TopProfileLayout() {
-    Surface(
+    val scrollState = rememberScrollState()
+
+    BoxWithConstraints(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        shape = RoundedCornerShape(8),
+            .fillMaxSize()
+            .nestedScroll(nestedScrollInteropConnection)
+            .systemBarsPadding()
     ) {
-        Column(modifier = Modifier.padding(10.dp)) {
-            Row(
-                modifier = Modifier.padding(vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically,
+        Surface {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
             ) {
-                Icon(
-                    painter = painterResource(id = DCodeIcon.DrawableResourceIcon(MyIcons.AppIcon).id),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(60.dp)
+                ProfileHeader(
+                    scrollState,
+                    userData,
+                    this@BoxWithConstraints.maxHeight
                 )
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    Text(
-                        text = username,
-                        style = MaterialTheme.typography.labelMedium,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                UserInfoFields(userData, this@BoxWithConstraints.maxHeight)
             }
-
-            Text(
-                modifier = Modifier.padding(vertical = 5.dp),
-                text = my_description,
-                style = MaterialTheme.typography.bodySmall,
-            )
-
-            FlowRow(modifier = Modifier.padding(vertical = 5.dp)) {
-                imageTextList.forEach {
-                    ImageTextContent(
-                        modifier = Modifier.padding(vertical = 5.dp),
-                        icon = {
-                            when (it.icon) {
-                                is DCodeIcon.ImageVectorIcon -> Icon(
-                                    imageVector = it.icon.imageVector,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                )
-
-                                is DCodeIcon.DrawableResourceIcon -> Icon(
-                                    painter = painterResource(id = it.icon.id),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                )
-                            }
-                        },
-                        text = {
-                            Text(
-                                text = it.text,
-                                style = MaterialTheme.typography.labelLarge,
-                            )
-                        }
-                    )
-                }
-            }
-
         }
-
     }
 }
 
 @Composable
-fun ImageTextContent(
-    icon: @Composable () -> Unit,
-    text: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+private fun UserInfoFields(userData: ProfileUiState, containerHeight: Dp) {
+    Column {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        NameAndPosition(userData)
+
+        // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
+        // in order to always leave some content at the top.
+        Spacer(Modifier.height((containerHeight - 320.dp).coerceAtLeast(0.dp)))
+    }
+}
+
+@Composable
+private fun NameAndPosition(
+    userData: ProfileUiState
 ) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        icon()
-        Spacer(modifier = Modifier.width(5.dp))
-        text()
-        Spacer(modifier = Modifier.width(10.dp))
-    }
-}
-
-@Composable
-fun MainProfileContent() {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        shape = RoundedCornerShape(8),
-    ) {
-        Column(modifier = Modifier.padding(5.dp)) {
-            Text(
-                modifier = Modifier
-                    .padding(10.dp),
-                text = "Popular",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            PopularContentList()
-
-            Divider(modifier = Modifier.padding(vertical = 15.dp))
-
-            GitContentItem(
-                modifier = Modifier.padding(vertical = 2.dp),
-                icon = {
-                    Icon(
-                        imageVector = DCodeIcon.ImageVectorIcon(MyIcons.List).imageVector,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(6.dp)
-                    )
-                },
-                text = {
-                    Text(
-                        text = "Repositories",
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                },
-                endItem = {
-                    Text(
-                        modifier = Modifier.padding(5.dp),
-                        text = "24"
-                    )
-                }
-            )
-            GitContentItem(
-                modifier = Modifier.padding(vertical = 2.dp),
-                icon = {
-                    Icon(
-                        imageVector = DCodeIcon.ImageVectorIcon(MyIcons.Star).imageVector,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(6.dp)
-                    )
-                },
-                text = {
-                    Text(
-                        text = "Starred",
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                },
-                endItem = {
-                    Text(
-                        modifier = Modifier.padding(5.dp),
-                        text = "60"
-                    )
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun PopularContentList() {
-    LazyRow {
-        items(
-            items = profilePopularList,
-            itemContent = {
-                Surface(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .padding(5.dp),
-                    shape = RoundedCornerShape(8),
-                    border = BorderStroke(0.1.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Column(modifier = Modifier.padding(5.dp)) {
-                        Row(
-                            modifier = Modifier.padding(vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                painter = painterResource(id = DCodeIcon.DrawableResourceIcon(
-                                    MyIcons.AppIcon
-                                ).id),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Text(
-                                text = it.name,
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                        }
-
-                        Text(
-                            modifier = Modifier.padding(vertical = 5.dp),
-                            text = it.description,
-                            style = MaterialTheme.typography.bodySmall, maxLines = 2,
-                        )
-
-                        Row(
-                            modifier = Modifier.padding(vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            ImageTextContent(
-                                modifier = Modifier.padding(vertical = 5.dp),
-                                icon = {
-                                    Icon(
-                                        imageVector = DCodeIcon.ImageVectorIcon(MyIcons.Star).imageVector,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .size(15.dp)
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        text = it.star,
-                                        style = MaterialTheme.typography.labelLarge,
-                                    )
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            ImageTextContent(
-                                modifier = Modifier.padding(vertical = 5.dp),
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = DCodeIcon.DrawableResourceIcon(
-                                            MyIcons.AppIcon
-                                        ).id),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .size(10.dp)
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        text = it.language,
-                                        style = MaterialTheme.typography.labelLarge,
-                                    )
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        UserInputText()
+        Divider()
+        Position(
+            userData,
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .baselineHeight(24.dp)
         )
     }
 }
 
 @Composable
-fun GitContentItem(
+private fun FirstName(userData: ProfileUiState, modifier: Modifier = Modifier) {
+    UserInputText()
+}
+
+@Composable
+private fun LastName(userData: ProfileUiState, modifier: Modifier = Modifier) {
+    UserInputText()
+}
+
+@Composable
+private fun Height(userData: ProfileUiState, modifier: Modifier = Modifier) {
+    UserInputText()
+}
+
+@Composable
+private fun Position(userData: ProfileUiState, modifier: Modifier = Modifier) {
+    Text(
+        text = userData.position,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+private fun ProfileHeader(
+    scrollState: ScrollState,
+    data: ProfileUiState,
+    containerHeight: Dp
+) {
+    val offset = (scrollState.value / 2)
+    val offsetDp = with(LocalDensity.current) { offset.toDp() }
+
+    data.photo?.let {
+        Image(
+            modifier = Modifier
+                .heightIn(max = containerHeight / 2)
+                .fillMaxWidth()
+                // TODO: Update to use offset to avoid recomposition
+                .padding(
+                    start = 16.dp,
+                    top = offsetDp,
+                    end = 16.dp
+                )
+                .clip(CircleShape),
+            painter = painterResource(id = it),
+            contentScale = ContentScale.Crop,
+            contentDescription = null
+        )
+    }
+}
+
+
+@Composable
+fun ProfileError() {
+    Text(stringResource(R.string.profile_error))
+}
+
+@Composable
+fun ProfileFab(
+    extended: Boolean,
+    userIsMe: Boolean,
     modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit,
-    text: @Composable () -> Unit,
-    endItem: @Composable () -> Unit,
+    onFabClicked: () -> Unit = { }
 ) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        icon()
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .weight(1f)
+    key(userIsMe) { // Prevent multiple invocations to execute during composition
+        FloatingActionButton(
+            onClick = onFabClicked,
+            modifier = modifier
+                .padding(16.dp)
+                .navigationBarsPadding()
+                .height(48.dp)
+                .widthIn(min = 48.dp),
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
         ) {
-            text()
-        }
-        endItem()
-    }
-}
 
-@Composable
-fun FooterContent() {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        shape = RoundedCornerShape(8),
-    ) {
-        Column(modifier = Modifier.padding(5.dp)) {
-            Text(
-                modifier = Modifier
-                    .padding(10.dp),
-                text = stringResource(id = R.string.txt_more_options),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            moreOptionsList.forEach {
-                MoreOptionsComp(it)
-            }
         }
     }
 }
 
-@Composable
-fun MoreOptionsComp(
-    featureList: FeatureList,
-) {
-    Row(
-        modifier = Modifier.padding(5.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        when (featureList.listIcon) {
-            is DCodeIcon.ImageVectorIcon -> Icon(
-                imageVector = featureList.listIcon.imageVector,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(6.dp)
-            )
 
-            is DCodeIcon.DrawableResourceIcon -> Icon(
-                painter = painterResource(id = featureList.listIcon.id),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(6.dp)
+@Composable
+private fun UserInputText() {
+    var firstNameText by remember { mutableStateOf(TextFieldValue("")) }
+    var lastNameText by remember { mutableStateOf(TextFieldValue("")) }
+    var heightText by remember { mutableStateOf(TextFieldValue("")) }
+    var weightText by remember { mutableStateOf(TextFieldValue("")) }
+    OutlinedTextField(
+        value = firstNameText,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "first name"
             )
-            else -> {
-                SettingsScreen()
-            }
+        },
+        onValueChange = {
+            firstNameText = it
+        },
+        label = {
+            Text(text = "First Name")
+        },
+        placeholder = {
+            Text(text = "Enter your first name.")
         }
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .weight(1f)
-        ) {
-            Text(
-                text = featureList.name,
-                style = MaterialTheme.typography.labelLarge
+
+    )
+    OutlinedTextField(
+        value = lastNameText,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Person2,
+                contentDescription = "last name"
             )
+        },
+        onValueChange = {
+            lastNameText = it
+        },
+        label = {
+            Text(text = "last Name")
+        },
+        placeholder = {
+            Text(text = "Enter your last name.")
         }
-        Icon(
-            imageVector = MyIcons.KeyboardArrowRight,
-            contentDescription = null,
-            modifier = Modifier.padding(4.dp)
-        )
-    }
+
+    )
+    OutlinedTextField(
+        value = heightText,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Height,
+                contentDescription = "height"
+            )
+        },
+        onValueChange = {
+            heightText = it
+        },
+        label = {
+            Text(text = "height")
+        },
+        placeholder = {
+            Text(text = "Enter your height.")
+        }
+
+    )
+    OutlinedTextField(
+        value = weightText,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.MonitorWeight,
+                contentDescription = "weight"
+            )
+        },
+        onValueChange = {
+            weightText = it
+        },
+        label = {
+            Text(text = "weight")
+        },
+        placeholder = {
+            Text(text = "Enter your weight.")
+        }
+    )
 }
