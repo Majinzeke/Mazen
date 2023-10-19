@@ -26,15 +26,14 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
+            <intent-filter>
+                <data
+                    android:host="www.bodybuilding.com"
+                    android:scheme="https" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="home"
-                    android:scheme="mazen" />
+                <action android:name="android.intent.action.VIEW" />
 
             </intent-filter>
         </activity>

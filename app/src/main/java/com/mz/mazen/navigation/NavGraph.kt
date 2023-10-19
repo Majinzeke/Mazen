@@ -2,6 +2,7 @@ package com.mz.mazen.navigation
 
 import WorkoutLogScreen
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.DrawerValue
@@ -13,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.mz.mazen.R
 import com.mz.mazen.ui.etrainer.eTrainerScreen
 import com.mz.mazen.ui.home.HomeScreen
@@ -36,13 +40,25 @@ fun SetupNavGraph(
         startDestination = Home.route,
         modifier = modifier,
     ) {
-        composable(route = Home.route){
+        val uri = "https://www.bodybuilding.com"
+        composable(
+            route = Home.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$uri/category/training"
+                    action = Intent.ACTION_VIEW
+                }
+            ),
+        ){workoutEntry ->
+
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             HomeScreen(
                 drawerState = drawerState,
                 navigateToProfile = { /*TODO*/ },
                 navigateToWorkoutLog = { /*TODO*/ },
-                navigateToWrite = { /*TODO*/ }) {
+                navigateToWrite = { /*TODO*/ },
+
+            ) {
 
             }
         }
