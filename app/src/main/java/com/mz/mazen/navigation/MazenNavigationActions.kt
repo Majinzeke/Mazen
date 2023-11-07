@@ -1,6 +1,7 @@
 package com.mz.mazen.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -18,7 +19,10 @@ interface MazenNavigationActions {
     val route:String
 }
 
-object Home : MazenNavigationActions {
+object Authentication : MazenNavigationActions {
+    override val icon = Icons.Filled.AutoAwesome
+    override val route = "auth"
+}object Home : MazenNavigationActions {
     override val icon = Icons.Filled.Home
     override val route = "home"
 }

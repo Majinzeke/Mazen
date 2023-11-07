@@ -1,4 +1,4 @@
-package com.mz.mazen.ui.etrainer
+package com.mz.mazen.ui.settings
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
-fun eTrainerScreen(){
+fun SettingsScreen(){
 
     Column {
         Text(text = "hi")

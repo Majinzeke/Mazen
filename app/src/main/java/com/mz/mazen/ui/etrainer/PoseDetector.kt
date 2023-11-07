@@ -1,4 +1,4 @@
-package com.mz.mazen.ui.settings
+package com.mz.mazen.ui.etrainer
 
 import android.annotation.SuppressLint
 import android.util.Log

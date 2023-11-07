@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'io.realm.kotlin'
 }
 
 android {
@@ -29,15 +30,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '1.8'
     }
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.3'
     }
@@ -117,7 +119,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
-    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.activity:activity-compose:1.8.0'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
@@ -188,6 +190,13 @@ dependencies {
 // Desugar JDK
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
+
+    /// Realm
+    implementation 'io.realm.kotlin:library-base:1.11.0'
+    implementation 'io.realm.kotlin:library-sync:1.11.0'// If using Device Sync
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3' // If using coroutines with the SDK
+
+
 // AndroidX Libraries
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -214,6 +223,15 @@ dependencies {
     implementation "androidx.camera:camera-video:${camerax_version}"
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-mlkit-vision:1.4.0-alpha01"
+
+
+    // Message Bar Compose
+    implementation 'com.github.stevdza-san:MessageBarCompose:1.0.5'
+
+    // One-Tap Compose
+    implementation 'com.github.stevdza-san:OneTapCompose:1.0.0'
+
+
 
 
     implementation("androidx.camera:camera-core:1.2.3")

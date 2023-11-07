@@ -1,15 +1,35 @@
 package com.mz.mazen.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mz.mazen.data.MongoDB
+import com.mz.mazen.data.WorkoutEntries
+import com.mz.mazen.data.model.RequestState
+import kotlinx.coroutines.launch
 
-///class HomeViewModel : ViewModel() {
-//
-//    private val _currentScreen = MutableLiveData<Screens>(Screens.HomeScreens.Home)
-//    val currentScreen: LiveData<Screens> = _currentScreen
-//
-//    fun setCurrentScreen(screen: Screens) {
-//        _currentScreen.value = screen
-//    }
-//}
+@RequiresApi(Build.VERSION_CODES.O)
+
+class HomeViewModel : ViewModel() {
+
+    var workoutEntries: MutableState<WorkoutEntries> = mutableStateOf(RequestState.Idle)
+
+    init {
+        observeAllEntries()
+    }
+
+
+    private fun observeAllEntries(){
+        viewModelScope.launch {
+            MongoDB.getWorkoutEntries().collect() { result ->
+                workoutEntries.value = result
+
+            }
+        }
+    }
+
+
+}

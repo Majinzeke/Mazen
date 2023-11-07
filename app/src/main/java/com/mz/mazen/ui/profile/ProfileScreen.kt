@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Person2
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -58,7 +59,11 @@ import com.mz.mazen.utils.baselineHeight
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileScreen(
-    userData: ProfileUiState,
+    uiState: UiState,
+    onFirstNameChanged: (String) -> Unit,
+    onLastNameChanged: (String) -> Unit,
+    onHeightChanged: (String) -> Unit,
+    onWeightChanged: (String) -> Unit,
     nestedScrollInteropConnection: NestedScrollConnection = rememberNestedScrollInteropConnection()
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
@@ -79,21 +84,21 @@ fun ProfileScreen(
             ) {
                 ProfileHeader(
                     scrollState,
-                    userData,
+                    uiState,
                     this@BoxWithConstraints.maxHeight
                 )
-                UserInfoFields(userData, this@BoxWithConstraints.maxHeight)
+                UserInfoFields(uiState, this@BoxWithConstraints.maxHeight)
             }
         }
     }
 }
 
 @Composable
-private fun UserInfoFields(userData: ProfileUiState, containerHeight: Dp) {
+private fun UserInfoFields(uiState: UiState, containerHeight: Dp) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        NameAndPosition(userData)
+        NameAndPosition(uiState)
 
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
@@ -103,13 +108,13 @@ private fun UserInfoFields(userData: ProfileUiState, containerHeight: Dp) {
 
 @Composable
 private fun NameAndPosition(
-    userData: ProfileUiState
+    uiState: UiState
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         UserInputText()
         Divider()
         Position(
-            userData,
+            uiState,
             modifier = Modifier
                 .padding(bottom = 20.dp)
                 .baselineHeight(24.dp)
@@ -117,35 +122,47 @@ private fun NameAndPosition(
     }
 }
 
-@Composable
-private fun FirstName(userData: ProfileUiState, modifier: Modifier = Modifier) {
-    UserInputText()
-}
 
 @Composable
-private fun LastName(userData: ProfileUiState, modifier: Modifier = Modifier) {
-    UserInputText()
-}
-
-@Composable
-private fun Height(userData: ProfileUiState, modifier: Modifier = Modifier) {
-    UserInputText()
-}
-
-@Composable
-private fun Position(userData: ProfileUiState, modifier: Modifier = Modifier) {
-    Text(
-        text = userData.position,
+private fun Position(uiState: UiState, modifier: Modifier = Modifier) {
+    uiState.firstName?.let {
+        Text(
+        text = it,
         modifier = modifier,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
+    }
+    uiState.lastName?.let {
+        Text(
+        text = it,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    }
+    uiState.height?.let {
+        Text(
+        text = it,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    }
+    uiState.weight?.let {
+        Text(
+        text = it,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    }
 }
 
 @Composable
 private fun ProfileHeader(
     scrollState: ScrollState,
-    data: ProfileUiState,
+    data: UiState,
     containerHeight: Dp
 ) {
     val offset = (scrollState.value / 2)
@@ -169,35 +186,6 @@ private fun ProfileHeader(
         )
     }
 }
-
-
-@Composable
-fun ProfileError() {
-    Text(stringResource(R.string.profile_error))
-}
-
-@Composable
-fun ProfileFab(
-    extended: Boolean,
-    userIsMe: Boolean,
-    modifier: Modifier = Modifier,
-    onFabClicked: () -> Unit = { }
-) {
-    key(userIsMe) { // Prevent multiple invocations to execute during composition
-        FloatingActionButton(
-            onClick = onFabClicked,
-            modifier = modifier
-                .padding(16.dp)
-                .navigationBarsPadding()
-                .height(48.dp)
-                .widthIn(min = 48.dp),
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        ) {
-
-        }
-    }
-}
-
 
 @Composable
 private fun UserInputText() {
@@ -224,6 +212,9 @@ private fun UserInputText() {
         }
 
     )
+    Button(onClick = { /*TODO*/ }) {
+        
+    }
     OutlinedTextField(
         value = lastNameText,
         leadingIcon = {

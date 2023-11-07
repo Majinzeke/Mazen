@@ -36,4 +36,11 @@
     <string name="profile_error">Profile Error..</string>
     <string name="textfield_desc">Description</string>
     <string name="textfield_hint">Hint</string>
+    <string name="workout_article">Workout Articles</string>
+    <string name="motivation_article">Motivation Articles</string>
+    <string name="nutrition_article">Nutrition Articles</string>
+    <string name="mazen">Mazen</string>
+    <string name="auth_title">Title</string>
+    <string name="auth_subtitle">Subtite\n</string>
+
 </resources>

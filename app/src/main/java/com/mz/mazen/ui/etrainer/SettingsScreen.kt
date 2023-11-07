@@ -1,4 +1,4 @@
-package com.mz.mazen.ui.settings
+package com.mz.mazen.ui.etrainer
 
 import android.content.Context
 import android.util.Log
@@ -43,7 +43,7 @@ import com.google.mlkit.vision.pose.PoseLandmark
 
 
 @Composable
-fun SettingsScreen(
+fun EtrainerScreen(
 
 ) {
     var lens by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }
