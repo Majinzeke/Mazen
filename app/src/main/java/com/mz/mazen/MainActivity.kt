@@ -17,7 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.pose.Pose
+import com.mz.mazen.navigation.Authentication
+import com.mz.mazen.navigation.Home
 import com.mz.mazen.ui.theme.MazenTheme
+import com.mz.mazen.utils.Constants.APP_ID
+import io.realm.kotlin.mongodb.App
 
 
 class MainActivity : ComponentActivity() {
@@ -73,3 +77,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private fun getStartDestination(): String{ val user = App.create(APP_ID).currentUser
+    return if (user != null && user.loggedIn) Home.route
+    else Authentication.route}

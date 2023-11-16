@@ -32,7 +32,6 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="user_id">User Id</string>
-    <string name="display_name">Display Name</string>
     <string name="profile_error">Profile Error..</string>
     <string name="textfield_desc">Description</string>
     <string name="textfield_hint">Hint</string>
@@ -42,5 +41,10 @@
     <string name="mazen">Mazen</string>
     <string name="auth_title">Title</string>
     <string name="auth_subtitle">Subtite\n</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight\n</string>
+    <string name="timezone">Height\n</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="message">Edit this</string>
 
 </resources>

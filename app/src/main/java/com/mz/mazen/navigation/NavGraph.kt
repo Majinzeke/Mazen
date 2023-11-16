@@ -1,8 +1,9 @@
 package com.mz.mazen.navigation
 
-import WorkoutLogScreen
+import ProfileScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
@@ -21,16 +22,20 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import com.mz.mazen.data.MongoDB
+import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
 import com.mz.mazen.ui.authentication.AuthenticationScreen
 import com.mz.mazen.ui.authentication.AuthenticationViewModel
 import com.mz.mazen.ui.etrainer.EtrainerScreen
 import com.mz.mazen.ui.home.HomeScreen
 import com.mz.mazen.ui.home.HomeViewModel
-import com.mz.mazen.ui.profile.ProfileScreen
-import com.mz.mazen.ui.profile.ProfileUiState
-import com.mz.mazen.ui.profile.ProfileViewModel
+import com.mz.mazen.ui.profile.ProfileViewModel2
 import com.mz.mazen.ui.settings.SettingsScreen
+import com.mz.mazen.ui.workoutlog.WorkoutEntryScreen
+import com.mz.mazen.ui.workoutlog.WorkoutLogEntryContent
+import com.mz.mazen.ui.workoutlog.WorkoutLogUiState
 import com.mz.mazen.ui.workoutlog.WorkoutLogViewModel
 import com.mz.mazen.utils.Constants.APP_ID
 import com.mz.mazen.utils.Constants.PROFILE_SCREEN_ARGUMENT_KEY
@@ -52,7 +57,7 @@ fun SetupNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Home.route,
+        startDestination = Authentication.route,
         modifier = modifier
     )
     {
@@ -88,8 +93,8 @@ fun SetupNavGraph(
             }
         )
         workoutLogRoute(
-            navigateToHome = {
-                navController.navigate(route = Home.route)
+            navigateToWorkoutLogWriteScreen = {
+                navController.navigate(route = WorkoutLogEntry.route)
 
             }
         )
@@ -97,6 +102,13 @@ fun SetupNavGraph(
 
         )
         settingsRoute()
+
+        workoutLogWriteRoute(
+            navigateToWorkoutLog = {
+                navController.navigate(route = WorkoutLog.route)
+            },
+            paddingValues = PaddingValues()
+        )
 
     }
 
@@ -143,77 +155,6 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.workoutLogRoute(navigateToHome: () -> Unit) {
-
-    composable(route = WorkoutLog.route) {
-        val viewModel: WorkoutLogViewModel = viewModel()
-        val entries by viewModel.entries
-        val messageBarState = rememberMessageBarState()
-        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-        val scope = rememberCoroutineScope()
-
-
-        WorkoutLogScreen(
-            drawerState = drawerState,
-            navigateToWrite = navigateToHome,
-            workoutEntries = entries,
-            onMenuClicked = {
-                scope.launch {
-                    drawerState.open()
-                    navigateToHome
-                }
-            }
-        )
-    }
-}
-
-
-fun NavGraphBuilder.etrainerRoute(
-
-) {
-    composable(route = Etrainer.route){
-        EtrainerScreen()
-    }
-}
-fun NavGraphBuilder.settingsRoute(
-
-) {
-    composable(route = Settings.route){
-        SettingsScreen()
-    }
-}
-
-fun NavGraphBuilder.profileRoute(
-    navigateToProfile: () -> Unit,
-    navigateToWorkoutLog: () -> Unit,
-    navigateToAuth: () -> Unit
-) {
-    composable(
-        route = Profile.route,
-        arguments = listOf(navArgument(name = PROFILE_SCREEN_ARGUMENT_KEY){
-            type = NavType.StringType
-            nullable = true
-            defaultValue = null
-        })
-        ) {
-        val viewModel: ProfileViewModel = viewModel()
-        val uiState = viewModel.uiState
-
-        ProfileScreen(
-            uiState = uiState,
-            onFirstNameChanged = {viewModel.setFirstName(firstName = it)},
-            onHeightChanged = {viewModel.setHeight(height = it)},
-            onLastNameChanged = {viewModel.setLastName(lastName = it)},
-            onWeightChanged = {viewModel.setFirstName(firstName = it)},
-            
-        )
-
-
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeRoute(
     navigateToProfile: () -> Unit,
@@ -257,25 +198,150 @@ fun NavGraphBuilder.homeRoute(
             MongoDB.configureTheRealm()
         }
 
-        DisplayAlertDialog(
-            title = "Sign Out",
-            message = "Are you sure?",
-            dialogOpened = signOutDialogOpened,
-            onDialogClosed = { signOutDialogOpened = false },
-            onYesClicked = {
-                scope.launch(Dispatchers.IO) {
-                    val user = App.create(APP_ID).currentUser
-                    if (user != null) {
-                        user.logOut()
-                        navigateToAuth()
-                    }
-
-                }
-            }
-        )
-
     }
 }
+
+@OptIn(ExperimentalPagerApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
+fun NavGraphBuilder.workoutLogRoute(navigateToWorkoutLogWriteScreen: () -> Unit) {
+
+    composable(route = WorkoutLog.route) {
+        val viewModel: WorkoutLogViewModel = viewModel()
+        val entries by viewModel.entries
+        val messageBarState = rememberMessageBarState()
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        val pagerState = rememberPagerState()
+
+
+        WorkoutLogEntryContent(
+            uiState = WorkoutLogUiState(
+                selectedWorkoutId = String(),
+                selectedWorkout = null,
+
+            ),
+            numberOfSets = entries.toString(),
+            numberOfReps = entries.toString(),
+            workoutName = entries.toString(),
+            onWorkoutNameChanged = {
+
+            },
+            onNumberOfRepsChanged = {
+
+            },
+            onNumberOfSetsChanged = {
+
+            },
+            onSavedClicked = {
+                             scope.launch {
+                                 viewModel.entries
+                             }
+            },
+            paddingValues = PaddingValues(),
+            pagerState = pagerState
+
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalPagerApi::class)
+fun NavGraphBuilder.workoutLogWriteRoute(
+    paddingValues: PaddingValues,
+    navigateToWorkoutLog: () -> Unit
+){
+    composable(route = WorkoutLogEntry.route){
+        val viewModel: WorkoutLogViewModel = viewModel()
+        val pagerState = rememberPagerState()
+        val uiState = viewModel.uiState
+
+
+        WorkoutEntryScreen(
+            pagerState = pagerState,
+            workoutType = { "" },
+            onSaveClicked = {
+
+            },
+            onBackPressed = {
+
+            } ,
+            uiState = uiState,
+            onDescriptionChanged = {
+
+            },
+            onDateTimeUpdated = {
+
+            },
+            onDeleteConfirmed = {
+
+            },
+            onTitleChanged = {
+
+            }
+
+        )
+    }
+
+}
+
+fun NavGraphBuilder.etrainerRoute(
+
+) {
+    composable(route = Etrainer.route){
+        EtrainerScreen()
+    }
+}
+fun NavGraphBuilder.settingsRoute(
+
+) {
+    composable(route = Settings.route){
+        SettingsScreen()
+    }
+}
+
+fun NavGraphBuilder.profileRoute(
+    navigateToProfile: () -> Unit,
+    navigateToWorkoutLog: () -> Unit,
+    navigateToAuth: () -> Unit
+) {
+    composable(
+        route = Profile.route,
+        arguments = listOf(navArgument(name = PROFILE_SCREEN_ARGUMENT_KEY){
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        })
+        ) {
+        val viewModel: ProfileViewModel2 = viewModel()
+        val uiState = viewModel.uiState
+
+        ProfileScreen(
+               uiState = uiState,
+               onFirstNameChanged = {viewModel.setFirstName(firstName = it)},
+               onLastNameChanged  = {viewModel.setLastName(lastName = it)},
+               onWeightChanged = {viewModel.setWeight(weight = 0)},
+               onHeightChanged = {viewModel.setHeight(height = 0)},
+            onSaveClicked = {
+                viewModel.setFirstName(
+                    firstName = it.firstName,
+                )
+                viewModel.setLastName(
+                    lastName = it.lastName
+                )
+                viewModel.setHeight(
+                    height = it.height
+                )
+                viewModel.setWeight(
+                    weight = it.weight
+                )
+            }
+           )
+    }
+
+}
+
+
+
 
 
 

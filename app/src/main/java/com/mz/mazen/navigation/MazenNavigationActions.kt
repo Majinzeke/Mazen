@@ -41,6 +41,11 @@ object Etrainer : MazenNavigationActions {
 object WorkoutLog : MazenNavigationActions {
     override val icon = Icons.Filled.SportsGymnastics
     override val route = "workout_log"
+}
+
+object WorkoutLogEntry : MazenNavigationActions {
+    override val icon = Icons.Filled.SportsGymnastics
+    override val route = "workout_log_entry"
     const val workoutTypeArg = "workout_type"
     val arguments = listOf(
         navArgument(workoutTypeArg) {type= NavType.StringType}
