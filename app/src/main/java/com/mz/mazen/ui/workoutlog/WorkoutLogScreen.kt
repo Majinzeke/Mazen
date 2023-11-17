@@ -49,9 +49,7 @@ private val defaultSpacerSize = 16.dp
 fun WorkoutLogScreen(
     entries: WorkoutEntries,
     drawerState: DrawerState,
-    onMenuClicked: () -> Unit,
-    navigateToWrite: () -> Unit,
-    onSignedOutClicked: () -> Unit,
+    navigateToWorkoutEntry: () -> Unit,
     navigateToWriteWithArgs: (String) -> Unit,
 
 
@@ -61,7 +59,6 @@ fun WorkoutLogScreen(
 
     NavigationDrawer(
         drawerState = drawerState,
-        onSignOutClicked = onSignedOutClicked
     ) {
         Scaffold(
             topBar = {
@@ -69,10 +66,10 @@ fun WorkoutLogScreen(
             },
 
             floatingActionButton = {
-                FloatingActionButton(onClick = navigateToWrite) {
+                FloatingActionButton(onClick = navigateToWorkoutEntry) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "New Poker Entry"
+                        contentDescription = "New Workout Entry"
                     )
 
                 }
@@ -113,7 +110,6 @@ fun WorkoutLogScreen(
 @Composable
 fun NavigationDrawer(
     drawerState: DrawerState,
-    onSignOutClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
@@ -144,7 +140,9 @@ fun NavigationDrawer(
                                 Text(text = "Sign Out")
                             }
                         }, selected = false,
-                        onClick = onSignOutClicked
+                        onClick = {
+
+                        }
                     )
                 }
             )

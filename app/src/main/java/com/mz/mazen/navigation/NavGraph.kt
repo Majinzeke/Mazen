@@ -1,6 +1,7 @@
 package com.mz.mazen.navigation
 
 import ProfileScreen
+import WorkoutLogScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -93,8 +94,11 @@ fun SetupNavGraph(
             }
         )
         workoutLogRoute(
-            navigateToWorkoutLogWriteScreen = {
+            navigateToWorkoutEntryScreen = {
                 navController.navigate(route = WorkoutLogEntry.route)
+
+            },
+            navigateToWriteWithArgs = {
 
             }
         )
@@ -103,7 +107,7 @@ fun SetupNavGraph(
         )
         settingsRoute()
 
-        workoutLogWriteRoute(
+        workoutEntryScreenRoute(
             navigateToWorkoutLog = {
                 navController.navigate(route = WorkoutLog.route)
             },
@@ -176,23 +180,6 @@ fun NavGraphBuilder.homeRoute(
             navigateToWorkoutLog = navigateToWorkoutLog,
             navigateToAuth = navigateToAuth,
         )
-        DisplayAlertDialog(
-            title = "Sign Out",
-            message = "Are you sure?",
-            dialogOpened = signOutDialogOpened,
-            onDialogClosed = { signOutDialogOpened = false },
-            onYesClicked = {
-                scope.launch(Dispatchers.IO) {
-                    val user = App.create(APP_ID).currentUser
-                    if (user != null) {
-                        user.logOut()
-                        withContext(Dispatchers.Main) {
-                            navigateToAuth()
-                        }
-                    }
-                }
-            }
-        )
 
         LaunchedEffect(key1 = Unit) {
             MongoDB.configureTheRealm()
@@ -203,7 +190,10 @@ fun NavGraphBuilder.homeRoute(
 
 @OptIn(ExperimentalPagerApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.workoutLogRoute(navigateToWorkoutLogWriteScreen: () -> Unit) {
+fun NavGraphBuilder.workoutLogRoute(
+    navigateToWorkoutEntryScreen: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit
+) {
 
     composable(route = WorkoutLog.route) {
         val viewModel: WorkoutLogViewModel = viewModel()
@@ -212,33 +202,14 @@ fun NavGraphBuilder.workoutLogRoute(navigateToWorkoutLogWriteScreen: () -> Unit)
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
+        val uiState = viewModel.uiState
 
 
-        WorkoutLogEntryContent(
-            uiState = WorkoutLogUiState(
-                selectedWorkoutId = String(),
-                selectedWorkout = null,
-
-            ),
-            numberOfSets = entries.toString(),
-            numberOfReps = entries.toString(),
-            workoutName = entries.toString(),
-            onWorkoutNameChanged = {
-
-            },
-            onNumberOfRepsChanged = {
-
-            },
-            onNumberOfSetsChanged = {
-
-            },
-            onSavedClicked = {
-                             scope.launch {
-                                 viewModel.entries
-                             }
-            },
-            paddingValues = PaddingValues(),
-            pagerState = pagerState
+        WorkoutLogScreen(
+            drawerState = drawerState,
+            navigateToWorkoutEntry = navigateToWorkoutEntryScreen,
+            navigateToWriteWithArgs = navigateToWriteWithArgs ,
+            entries = entries,
 
         )
     }
@@ -246,7 +217,7 @@ fun NavGraphBuilder.workoutLogRoute(navigateToWorkoutLogWriteScreen: () -> Unit)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPagerApi::class)
-fun NavGraphBuilder.workoutLogWriteRoute(
+fun NavGraphBuilder.workoutEntryScreenRoute(
     paddingValues: PaddingValues,
     navigateToWorkoutLog: () -> Unit
 ){
