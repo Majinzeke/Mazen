@@ -40,10 +40,11 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
+import com.mz.mazen.ui.settings.PoseDetectorProcessor
 
 
 @Composable
-fun EtrainerScreen(
+fun AiTrainerScreen(
 
 ) {
     var lens by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }

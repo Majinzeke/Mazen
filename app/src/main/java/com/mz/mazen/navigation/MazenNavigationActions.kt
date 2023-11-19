@@ -30,13 +30,10 @@ object Profile : MazenNavigationActions {
     override val icon = Icons.Filled.Person
     override val route = "profile"
 }
-object Settings : MazenNavigationActions {
-    override val icon = Icons.Filled.Settings
-    override val route = "settings"
-}
-object Etrainer : MazenNavigationActions {
+
+object AiTrainer : MazenNavigationActions {
     override val icon = Icons.Filled.Computer
-    override val route = "etrainer"
+    override val route = "aitrainer"
 }
 object WorkoutLog : MazenNavigationActions {
     override val icon = Icons.Filled.SportsGymnastics
@@ -73,7 +70,6 @@ fun NavHostController.navigateSingleTopTo(route: String) =
 val mazenTabScreens = listOf(
     Home,
     Profile,
-    Settings,
     WorkoutLog,
-    Etrainer
+    AiTrainer
 )

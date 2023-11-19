@@ -26,9 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
-import com.mz.mazen.ui.workoutlog.EmptyPage
 import com.mz.mazen.ui.workoutlog.WorkoutEntryHolder
-import com.mz.mazen.ui.workoutlog.WorkoutLogUiState
 import java.time.LocalDate
 
 private val defaultSpacerSize = 16.dp
@@ -121,7 +119,7 @@ fun DateHeader(localDate: LocalDate) {
 
 @Composable
 fun EmptyPage(
-    title: String = "Empty Poker Entry",
+    title: String = "Empty Workout Entry",
     subtitle: String = "Write Something"
 ){
     Column(modifier = Modifier

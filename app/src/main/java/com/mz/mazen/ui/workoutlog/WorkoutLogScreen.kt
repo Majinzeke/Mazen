@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.mz.mazen.R
 import com.mz.mazen.data.WorkoutEntries
 import com.mz.mazen.data.model.RequestState
-import com.mz.mazen.ui.workoutlog.EmptyPage
+
 
 private val defaultSpacerSize = 16.dp
 
@@ -67,10 +67,8 @@ fun WorkoutLogScreen(
 
             floatingActionButton = {
                 FloatingActionButton(onClick = navigateToWorkoutEntry) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "New Workout Entry"
-                    )
+                    Icon(imageVector = Icons.Default.Edit,
+                        contentDescription = "New Workout Entry" )
 
                 }
             },
@@ -81,16 +79,18 @@ fun WorkoutLogScreen(
                         WorkoutLogScreenContent(
                             paddingValues = it,
                             workoutEntries = entries.data,
-                            onClick = navigateToWriteWithArgs
+                            onClick = { navigateToWorkoutEntry }
 
                         )
                     }
+
                     is RequestState.Error -> {
                         EmptyPage(
                             title = "Error",
                             subtitle = "${entries.error.message}"
                         )
                     }
+
                     is RequestState.Loading -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -99,6 +99,7 @@ fun WorkoutLogScreen(
                             CircularProgressIndicator()
                         }
                     }
+
                     else -> {}
                 }
             }

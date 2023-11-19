@@ -13,10 +13,11 @@ import com.mz.mazen.data.MongoDB
 import com.mz.mazen.data.WorkoutEntries
 import com.mz.mazen.data.model.RequestState
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
+import com.mz.mazen.data.model.workoutlog_model.WorkoutType
+import com.mz.mazen.utils.Constants.WORKOUTLOG_SCREEN_ARGUMENT_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -26,46 +27,50 @@ class WorkoutLogViewModel(
 
     var entries: MutableState<WorkoutEntries> = mutableStateOf(RequestState.Idle)
 
-    var uiState by mutableStateOf(WorkoutLogUiState())
+
+    var uiState by mutableStateOf(WorkoutEntryUiState())
+        private set
 
     init {
-        observeAllEntries()
+        getEntryIdArgument()
         fetchSelectedEntry()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun observeAllEntries(){
-        viewModelScope.launch {
-            MongoDB.getWorkoutEntries().collect() { result ->
-                entries.value = result
-            }
-        }
+    private fun getEntryIdArgument(){
+
+        uiState = uiState.copy(
+            selectedEntryId = savedStateHandle.get<String>(
+                key = WORKOUTLOG_SCREEN_ARGUMENT_KEY
+            )
+        )
     }
 
     private fun fetchSelectedEntry(){
-        viewModelScope.launch(Dispatchers.Main){
-            val entry = MongoDB.getSelectedWorkoutEntry(workoutId = ObjectId.invoke())
-            if (entry is RequestState.Success){
-                setSelectedEntry(workoutLogModel = entry.data.workoutName)
-                setExerciseName(exerciseName = entry.data.exerciseName)
-                setExerciseReps(numberOfReps = entry.data.numberOfReps.toString())
-                setExerciseSets(numberOfSets = entry.data.numberOfSets.toString())
+        if (uiState.selectedEntryId != null){
+            viewModelScope.launch(Dispatchers.Main){
+                val entry = MongoDB.getSelectedWorkoutEntry(workoutId = ObjectId.invoke())
+                if (entry is RequestState.Success){
+                    setSelectedEntry(workoutLogModel = entry.data)
+                    setExerciseName(exerciseName = entry.data.exerciseName)
+                    setExerciseReps(numberOfReps = entry.data.numberOfReps.toLong())
+                    setExerciseSets(numberOfSets = entry.data.numberOfSets.toLong())
 
+                }
             }
         }
     }
 
-    private fun setSelectedEntry(workoutLogModel: String?){
-        uiState = uiState.copy(selectedWorkoutId = workoutLogModel)
+    private fun setSelectedEntry(workoutLogModel: WorkoutLogModel){
+        uiState = uiState.copy(selectedEntry = workoutLogModel)
     }
 
     private fun setExerciseName(exerciseName: String){
-        uiState = uiState.copy(exerciseName = exerciseName )
+        uiState = uiState.copy(workoutName = exerciseName )
     }
-    private fun setExerciseReps(numberOfReps: String?){
+    private fun setExerciseReps(numberOfReps: Long){
         uiState = uiState.copy(numberOfReps = numberOfReps )
     }
-    private fun setExerciseSets(numberOfSets: String?){
+    private fun setExerciseSets(numberOfSets: Long){
         uiState = uiState.copy(numberOfSets = numberOfSets )
 
     }
@@ -89,13 +94,12 @@ class WorkoutLogViewModel(
         }
     }
 }
-
-
-data class WorkoutLogUiState(
-    val selectedWorkout: WorkoutLogModel? = null,
-    val selectedWorkoutId: String? = null,
-    val workoutImage: Int? = null,
-    val exerciseName: String = "",
-    val numberOfReps: String? = "",
-    val numberOfSets: String? = "",
+data class WorkoutEntryUiState(
+    val selectedEntryId: String? = null,
+    val selectedEntry: WorkoutLogModel? = null,
+    val workoutName: String = "",
+    val description: String = "",
+    val workoutType: WorkoutType = WorkoutType.EmptyWorkout,
+    val numberOfSets: Long? = null,
+    val numberOfReps: Long? = null
 )

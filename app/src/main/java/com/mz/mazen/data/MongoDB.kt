@@ -1,11 +1,12 @@
 package com.mz.mazen.data
 
 import android.os.Build
-import android.provider.UserDictionary.Words.APP_ID
+import com.mz.mazen.utils.Constants.APP_ID
 import android.security.keystore.UserNotAuthenticatedException
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.mz.mazen.data.model.RequestState
+import com.mz.mazen.data.model.profile_model.Profile
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
 import com.mz.mazen.utils.toInstant
 import io.realm.kotlin.Realm
@@ -32,15 +33,15 @@ object MongoDB : MongoRepository {
         configureTheRealm()
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun configureTheRealm() {
         if (user != null) {
-            val config = SyncConfiguration.Builder(user, setOf(WorkoutLogModel::class))
+            val config = SyncConfiguration.Builder(
+                user,
+                setOf(WorkoutLogModel::class))
                 .initialSubscriptions{sub ->
                     add(
-                        query = sub.query<WorkoutLogModel>(query = "ownerId == $0", user.id),
+                        query = sub.query<WorkoutLogModel>(query = "ownerId == $0", user.identities),
                         name = "User Workout Entries"
                     )
                 }
@@ -80,7 +81,7 @@ object MongoDB : MongoRepository {
         return if (user != null) {
             try {
                 val entry =
-                    realm.query<WorkoutLogModel>(query = "_id == $0", workoutId).find().first()
+                    realm.query<WorkoutLogModel>(query = "ownerId == $0", workoutId).find().first()
                 RequestState.Success(data = entry)
             } catch (e: Exception) {
                 RequestState.Error(e)

@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
-import com.mz.mazen.data.model.workoutlog_model.WorkoutLogs
+import com.mz.mazen.data.model.workoutlog_model.WorkoutType
 import java.time.ZonedDateTime
 
 
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutEntryScreen(
-    uiState: WorkoutLogUiState,
+    uiState: WorkoutEntryUiState,
     workoutType: () -> String,
     pagerState: PagerState,
     onTitleChanged: (String) -> Unit,
@@ -28,8 +28,8 @@ fun WorkoutEntryScreen(
     onSaveClicked: (WorkoutLogModel) -> Unit
 ) {
 
-    LaunchedEffect(key1 = uiState.workoutImage){
-        pagerState.scrollToPage(WorkoutLogs.valueOf(uiState.workoutImage.toString()).ordinal)
+    LaunchedEffect(key1 = uiState.workoutType){
+        pagerState.scrollToPage(WorkoutType.valueOf(uiState.workoutType.toString()).ordinal)
     }
 
 
@@ -37,7 +37,7 @@ fun WorkoutEntryScreen(
     Scaffold(
         topBar = {
             WorkoutEntryTopBar(
-                selectedWorkoutEntry = uiState.selectedWorkout,
+                selectedWorkoutEntry = uiState.selectedEntry,
                 workoutType = workoutType,
                 onDeleteConfirmed = onDeleteConfirmed,
                 onBackPressed = onBackPressed,
@@ -48,7 +48,7 @@ fun WorkoutEntryScreen(
                 uiState = uiState,
                 paddingValues = it ,
                 pagerState = pagerState,
-                workoutName = uiState.exerciseName,
+                workoutName = uiState.workoutName,
                 numberOfReps = uiState.numberOfReps.toString() ,
                 numberOfSets = uiState.numberOfSets.toString(),
                 onSavedClicked = {

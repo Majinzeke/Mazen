@@ -38,14 +38,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
-import com.mz.mazen.data.model.workoutlog_model.WorkoutLogs
+import com.mz.mazen.data.model.workoutlog_model.WorkoutType
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun WorkoutLogEntryContent(
-    uiState: WorkoutLogUiState,
+    uiState: WorkoutEntryUiState,
     pagerState: PagerState,
     workoutName: String,
     onWorkoutNameChanged: (String) -> Unit,
@@ -84,12 +84,12 @@ fun WorkoutLogEntryContent(
             Spacer(modifier = Modifier.height(30.dp))
             HorizontalPager(
                 state = pagerState,
-                count = WorkoutLogs.values().size
+                count = WorkoutType.values().size
             ) { page ->
                 AsyncImage(
                     modifier = Modifier.size(120.dp),
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(WorkoutLogs.values()[page].icon)
+                        .data(WorkoutType.values()[page].icon)
                         .crossfade(true)
                         .build(),
                     contentDescription = "Workout Type")

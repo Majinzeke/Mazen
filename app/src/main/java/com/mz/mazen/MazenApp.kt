@@ -31,37 +31,5 @@ import com.mz.mazen.utils.MazenTabRow
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MazenApp() {
-    MazenTheme {
-        val navController = rememberNavController()
-        val currentBackStack by navController.currentBackStackEntryAsState()
-        var detectedPose by remember { mutableStateOf<Pose?>(null) }
-        val currentDestination = currentBackStack?.destination
-        val currentScreen =
-            mazenTabScreens.find { it.route == currentDestination?.route }
-                ?: Home
-        var lens by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-
-        Scaffold(
-            bottomBar = {
-                MazenTabRow(
-                    allScreens = mazenTabScreens,
-                    onTabSelected = { newScreen ->
-                        navController.navigateSingleTopTo(newScreen.route)
-                    } ,
-                    currentScreen = currentScreen
-                )
-            }
-        ) { innerPadding ->
-            SetupNavGraph(
-                navController = navController,
-                modifier = Modifier.padding(innerPadding)
-            )
-
-        }
-
-
-
-    }
 }

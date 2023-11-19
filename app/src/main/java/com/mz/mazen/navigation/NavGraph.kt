@@ -26,39 +26,29 @@ import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.mz.mazen.data.MongoDB
-import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
 import com.mz.mazen.ui.authentication.AuthenticationScreen
 import com.mz.mazen.ui.authentication.AuthenticationViewModel
-import com.mz.mazen.ui.etrainer.EtrainerScreen
+import com.mz.mazen.ui.etrainer.AiTrainerScreen
 import com.mz.mazen.ui.home.HomeScreen
 import com.mz.mazen.ui.home.HomeViewModel
 import com.mz.mazen.ui.profile.ProfileViewModel2
-import com.mz.mazen.ui.settings.SettingsScreen
 import com.mz.mazen.ui.workoutlog.WorkoutEntryScreen
-import com.mz.mazen.ui.workoutlog.WorkoutLogEntryContent
-import com.mz.mazen.ui.workoutlog.WorkoutLogUiState
 import com.mz.mazen.ui.workoutlog.WorkoutLogViewModel
-import com.mz.mazen.utils.Constants.APP_ID
 import com.mz.mazen.utils.Constants.PROFILE_SCREEN_ARGUMENT_KEY
-import com.mz.mazen.utils.DisplayAlertDialog
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
-import io.realm.kotlin.mongodb.App
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-
+    startDestination: String
     ) {
 
     NavHost(
         navController = navController,
-        startDestination = Authentication.route,
+        startDestination = Home.route,
         modifier = modifier
     )
     {
@@ -79,7 +69,8 @@ fun SetupNavGraph(
             },
             navigateToProfile = {
                 navController.navigate(route = Profile.route)
-            }
+            },
+
         )
         profileRoute(
             navigateToProfile = {
@@ -105,13 +96,15 @@ fun SetupNavGraph(
         etrainerRoute(
 
         )
-        settingsRoute()
 
         workoutEntryScreenRoute(
             navigateToWorkoutLog = {
                 navController.navigate(route = WorkoutLog.route)
             },
-            paddingValues = PaddingValues()
+            paddingValues = PaddingValues(),
+            navigateBack = {
+                navController.popBackStack()
+            }
         )
 
     }
@@ -219,7 +212,8 @@ fun NavGraphBuilder.workoutLogRoute(
 @OptIn(ExperimentalPagerApi::class)
 fun NavGraphBuilder.workoutEntryScreenRoute(
     paddingValues: PaddingValues,
-    navigateToWorkoutLog: () -> Unit
+    navigateToWorkoutLog: () -> Unit,
+    navigateBack: () -> Unit
 ){
     composable(route = WorkoutLogEntry.route){
         val viewModel: WorkoutLogViewModel = viewModel()
@@ -233,9 +227,7 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
             onSaveClicked = {
 
             },
-            onBackPressed = {
-
-            } ,
+            onBackPressed = navigateBack,
             uiState = uiState,
             onDescriptionChanged = {
 
@@ -258,15 +250,18 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
 fun NavGraphBuilder.etrainerRoute(
 
 ) {
-    composable(route = Etrainer.route){
-        EtrainerScreen()
+    composable(route = AiTrainer.route){
+        AiTrainerScreen()
     }
 }
+@OptIn(ExperimentalPagerApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.settingsRoute(
 
 ) {
-    composable(route = Settings.route){
-        SettingsScreen()
+
+    composable(route = AiTrainer.route){
+        AiTrainerScreen()
     }
 }
 
