@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.data.MongoDB
 import com.mz.mazen.navigation.Authentication
 import com.mz.mazen.navigation.Home

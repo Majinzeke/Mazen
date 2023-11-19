@@ -19,42 +19,17 @@ data class UiState(
 
 @Immutable
 data class ProfileScreenState(
-    val userId: String,
+    val userId: String?,
     @DrawableRes val photo: Int?,
-    val firstName: () -> Unit,
-    val lastName: String,
-    val status: String,
-    val height: String,
-    val weight: String,
-    val position: String,
+    val firstName: String?,
+    val lastName: String?,
+    val status: String?,
+    val height: Long,
+    val weight: Long,
+    val position: String?,
 ) {
 
 }
-
-
-/**
- * Example colleague profile
- */
-val newProfile = UiState(
-    selectedProfileId = null,
-    firstName = "",
-    lastName = "",
-    photo = R.drawable.ic_launcher_foreground,
-    height = 0,
-    weight = 0
-)
-
-/**
- * Example "me" profile.
- */
-val existingProfile = UiState(
-    selectedProfileId = null,
-    firstName = "",
-    lastName = "",
-    photo = R.drawable.ic_launcher_foreground,
-    height = 0,
-    weight = 0
-)
 
 open class Profile: RealmObject {
     @PrimaryKey

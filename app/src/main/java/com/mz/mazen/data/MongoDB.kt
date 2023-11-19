@@ -1,7 +1,7 @@
 package com.mz.mazen.data
 
 import android.os.Build
-import android.provider.UserDictionary.Words.APP_ID
+import com.mz.mazen.utils.Constants.APP_ID
 import android.security.keystore.UserNotAuthenticatedException
 import android.util.Log
 import androidx.annotation.RequiresApi
