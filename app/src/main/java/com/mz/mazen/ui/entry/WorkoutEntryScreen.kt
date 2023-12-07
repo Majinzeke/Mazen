@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WorkoutEntryScreen(
+fun WorkoutEntryScreen1(
     uiState: WorkoutEntryUiState,
     workoutTypeImage: () -> String,
     pagerState: PagerState,

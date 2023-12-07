@@ -4,13 +4,18 @@ import ProfileScreen
 import WorkoutLogScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.camera.core.CameraSelector
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,9 +27,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.data.MongoDB
 import com.mz.mazen.ui.authentication.AuthenticationScreen
 import com.mz.mazen.ui.authentication.AuthenticationViewModel
@@ -93,10 +101,6 @@ fun SetupNavGraph(
 
             }
         )
-        etrainerRoute(
-
-        )
-
         workoutEntryScreenRoute(
             navigateToWorkoutLog = {
                 navController.navigate(route = WorkoutLog.route)
@@ -106,6 +110,10 @@ fun SetupNavGraph(
                 navController.popBackStack()
             }
         )
+        aiTrainerRoute(
+
+        )
+        settingsRoute()
 
     }
 
@@ -159,6 +167,12 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuth: () -> Unit
 ) {
     composable(route = Home.route) {
+        val navController = rememberNavController()
+        val currentBackStack by navController.currentBackStackEntryAsState()
+        val currentDestination = currentBackStack?.destination
+        val currentScreen =
+            mazenTabScreens.find { it.route == currentDestination?.route }
+                ?: Home
         val viewModel: HomeViewModel = viewModel()
         val entries by viewModel.workoutEntries
         var signOutDialogOpened by remember {
@@ -247,7 +261,7 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
 
 }
 
-fun NavGraphBuilder.etrainerRoute(
+fun NavGraphBuilder.aiTrainerRoute(
 
 ) {
     composable(route = AiTrainer.route){

@@ -68,6 +68,7 @@ fun NavHostController.navigateSingleTopTo(route: String) =
     }
 
 val mazenTabScreens = listOf(
+    Authentication,
     Home,
     Profile,
     WorkoutLog,

@@ -32,6 +32,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SportsGolf
+import androidx.compose.material.icons.filled.SportsGymnastics
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.SportsGolf
+import androidx.compose.material.icons.outlined.SportsGymnastics
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
@@ -362,6 +373,40 @@ fun HomeScreen(
     val currentDestination = currentBackStack?.destination
     var padding by remember { mutableStateOf(PaddingValues()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    // Set up the bottom navigation items
+    val items = listOf(
+        BottomNavigationItem(
+            title = "Home",
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+            hasNews = false,
+        ),
+        BottomNavigationItem(
+            title = "Profile",
+            selectedIcon = Icons.Filled.Person,
+            unselectedIcon = Icons.Outlined.Person,
+            hasNews = false,
+        ),
+        BottomNavigationItem(
+            title = "WorkoutLog",
+            selectedIcon = Icons.Filled.SportsGymnastics,
+            unselectedIcon = Icons.Outlined.SportsGymnastics,
+            hasNews = false,
+        ),
+        BottomNavigationItem(
+            title = "Etrainer",
+            selectedIcon = Icons.Filled.SportsGolf,
+            unselectedIcon = Icons.Outlined.SportsGolf,
+            hasNews = false,
+        ),
+        BottomNavigationItem(
+            title = "Settings",
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings,
+            hasNews = false,
+        )
+    )
 
     Column(
         modifier

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.rememberNavController
 import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.data.MongoDB
 import com.mz.mazen.navigation.Authentication
@@ -69,11 +70,11 @@ class MainActivity : ComponentActivity() {
     private fun initView() {
         setContent {
             MazenTheme {
+                MazenApp()
 
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   MazenApp()
-                    MongoDB.configureTheRealm()
+
                 }
             }
         }
