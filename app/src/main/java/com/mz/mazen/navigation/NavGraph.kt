@@ -2,20 +2,17 @@ package com.mz.mazen.navigation
 
 import ProfileScreen
 import WorkoutLogScreen
+import WorkoutLogViewModel
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.camera.core.CameraSelector
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,17 +29,19 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
-import com.google.mlkit.vision.pose.Pose
 import com.mz.mazen.data.MongoDB
+import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
+import com.mz.mazen.data.model.workoutlog_model.WorkoutType
 import com.mz.mazen.ui.authentication.AuthenticationScreen
 import com.mz.mazen.ui.authentication.AuthenticationViewModel
+import com.mz.mazen.ui.entry.WorkoutEntryScreen
+import com.mz.mazen.ui.entry.WorkoutEntryViewModel
 import com.mz.mazen.ui.etrainer.AiTrainerScreen
 import com.mz.mazen.ui.home.HomeScreen
 import com.mz.mazen.ui.home.HomeViewModel
 import com.mz.mazen.ui.profile.ProfileViewModel2
-import com.mz.mazen.ui.workoutlog.WorkoutEntryScreen
-import com.mz.mazen.ui.workoutlog.WorkoutLogViewModel
 import com.mz.mazen.utils.Constants.PROFILE_SCREEN_ARGUMENT_KEY
+import com.mz.mazen.utils.Constants.WORKOUT_LOG_SCREEN_ARGUMENT_KEY
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 
@@ -52,11 +51,11 @@ fun SetupNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String
-    ) {
+) {
 
     NavHost(
         navController = navController,
-        startDestination = Home.route,
+        startDestination = Authentication.route,
         modifier = modifier
     )
     {
@@ -79,7 +78,7 @@ fun SetupNavGraph(
                 navController.navigate(route = Profile.route)
             },
 
-        )
+            )
         profileRoute(
             navigateToProfile = {
 
@@ -204,21 +203,19 @@ fun NavGraphBuilder.workoutLogRoute(
 
     composable(route = WorkoutLog.route) {
         val viewModel: WorkoutLogViewModel = viewModel()
-        val entries by viewModel.entries
+        val entries by viewModel.workoutEntries
         val messageBarState = rememberMessageBarState()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
-        val uiState = viewModel.uiState
 
 
         WorkoutLogScreen(
             drawerState = drawerState,
             navigateToWorkoutEntry = navigateToWorkoutEntryScreen,
-            navigateToWriteWithArgs = navigateToWriteWithArgs ,
+            navigateToWriteWithArgs = navigateToWriteWithArgs,
             entries = entries,
-
-        )
+            )
     }
 }
 
@@ -228,23 +225,48 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
     paddingValues: PaddingValues,
     navigateToWorkoutLog: () -> Unit,
     navigateBack: () -> Unit
-){
-    composable(route = WorkoutLogEntry.route){
-        val viewModel: WorkoutLogViewModel = viewModel()
+) {
+    composable(
+        route = WorkoutLogEntry.route,
+        arguments = listOf(
+            navArgument(
+                name = WORKOUT_LOG_SCREEN_ARGUMENT_KEY,
+                builder = {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                })
+        )
+
+    ) {
+        val viewModel: WorkoutEntryViewModel = viewModel()
         val pagerState = rememberPagerState()
         val uiState = viewModel.uiState
+        val pageNumber by remember { derivedStateOf { pagerState.currentPage } }
 
 
         WorkoutEntryScreen(
+            uiState = uiState,
             pagerState = pagerState,
-            workoutType = { "" },
             onSaveClicked = {
+                viewModel.insertEntry(
+                    workoutEntry = it.apply { workoutType = WorkoutType.values()[pageNumber].name},
+                    onError = {
 
+                    }, onSuccess = { navigateToWorkoutLog}
+                )
             },
             onBackPressed = navigateBack,
-            uiState = uiState,
             onDescriptionChanged = {
+                                   viewModel.insertEntry(
+                                       workoutEntry = WorkoutLogModel(),
+                                       onSuccess = {
 
+                                       },
+                                       onError = {
+
+                                       }
+                                   )
             },
             onDateTimeUpdated = {
 
@@ -254,7 +276,8 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
             },
             onTitleChanged = {
 
-            }
+            },
+            workoutTypeImage = { "" }
 
         )
     }
@@ -264,17 +287,18 @@ fun NavGraphBuilder.workoutEntryScreenRoute(
 fun NavGraphBuilder.aiTrainerRoute(
 
 ) {
-    composable(route = AiTrainer.route){
+    composable(route = AiTrainer.route) {
         AiTrainerScreen()
     }
 }
+
 @OptIn(ExperimentalPagerApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.settingsRoute(
 
 ) {
 
-    composable(route = AiTrainer.route){
+    composable(route = AiTrainer.route) {
         AiTrainerScreen()
     }
 }
@@ -286,21 +310,21 @@ fun NavGraphBuilder.profileRoute(
 ) {
     composable(
         route = Profile.route,
-        arguments = listOf(navArgument(name = PROFILE_SCREEN_ARGUMENT_KEY){
+        arguments = listOf(navArgument(name = PROFILE_SCREEN_ARGUMENT_KEY) {
             type = NavType.StringType
             nullable = true
             defaultValue = null
         })
-        ) {
+    ) {
         val viewModel: ProfileViewModel2 = viewModel()
         val uiState = viewModel.uiState
 
         ProfileScreen(
-               uiState = uiState,
-               onFirstNameChanged = {viewModel.setFirstName(firstName = it)},
-               onLastNameChanged  = {viewModel.setLastName(lastName = it)},
-               onWeightChanged = {viewModel.setWeight(weight = 0)},
-               onHeightChanged = {viewModel.setHeight(height = 0)},
+            uiState = uiState,
+            onFirstNameChanged = { viewModel.setFirstName(firstName = it) },
+            onLastNameChanged = { viewModel.setLastName(lastName = it) },
+            onWeightChanged = { viewModel.setWeight(weight = 0) },
+            onHeightChanged = { viewModel.setHeight(height = 0) },
             onSaveClicked = {
                 viewModel.setFirstName(
                     firstName = it.firstName,
@@ -315,7 +339,7 @@ fun NavGraphBuilder.profileRoute(
                     weight = it.weight
                 )
             }
-           )
+        )
     }
 
 }

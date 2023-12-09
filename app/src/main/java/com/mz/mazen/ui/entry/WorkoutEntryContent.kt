@@ -1,5 +1,8 @@
 package com.mz.mazen.ui.entry
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,20 +14,21 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material.Button
+import androidx.compose.material.Shapes
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,27 +41,29 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
 import com.mz.mazen.data.model.workoutlog_model.WorkoutType
-import com.mz.mazen.ui.workoutlog.WorkoutEntryUiState
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WorkoutEntryScreenContent(
-    uistate: WorkoutEntryUiState,
+fun WorkoutLogEntryContent(
+    uiState: WorkoutEntryUiState,
     pagerState: PagerState,
-    title: String,
-    onTitleChanged: (String) -> Unit,
-    description: String,
-    onDescriptionChanged: (String) -> Unit,
+    workoutName: String,
+    onWorkoutNameChanged: (String) -> Unit,
+    numberOfReps: String?,
+    numberOfSets: String?,
+    onNumberOfRepsChanged: (String) -> Unit,
+    onNumberOfSetsChanged: (String) -> Unit,
     paddingValues: PaddingValues,
-    onSaveClicked: (WorkoutLogModel) -> Unit,
-) {
+    onSavedClicked: (WorkoutLogModel) -> Unit
+){
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(key1 = scrollState.maxValue) {
+    LaunchedEffect(key1 = scrollState.maxValue){
         scrollState.scrollTo(scrollState.maxValue)
     }
 
@@ -81,56 +87,66 @@ fun WorkoutEntryScreenContent(
             HorizontalPager(
                 state = pagerState,
                 count = WorkoutType.values().size
-            )
-            { page ->
+            ) { page ->
                 AsyncImage(
                     modifier = Modifier.size(120.dp),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(WorkoutType.values()[page].icon)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "workout type"
-                )
+                    contentDescription = "Workout Type")
             }
             Spacer(modifier = Modifier.height(30.dp))
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = title,
-                onValueChange = onTitleChanged,
-                placeholder = { Text(text = "Title") },
+                value = workoutName ,
+                onValueChange = onWorkoutNameChanged,
+                placeholder = { Text(text = "Workout Name")},
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Unspecified,
                     disabledIndicatorColor = Color.Unspecified,
                     unfocusedIndicatorColor = Color.Unspecified,
-
-                    ),
+                ),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
                     onNext = {
-                        scope.launch {
-                            scrollState.animateScrollTo(Int.MAX_VALUE)
-                            focusManager.moveFocus(FocusDirection.Down)
-                        }
+                        focusManager.clearFocus()
                     }
-                ),
-                maxLines = 1,
-                singleLine = true
+                )
             )
+            Spacer(modifier = Modifier.height(30.dp))
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = description,
-                onValueChange = onDescriptionChanged,
-                placeholder = { Text(text = "Tell me about it.") },
+                value = workoutName ,
+                onValueChange = onWorkoutNameChanged,
+                placeholder = { Text(text = "Number of Sets")},
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Unspecified,
                     disabledIndicatorColor = Color.Unspecified,
                     unfocusedIndicatorColor = Color.Unspecified,
-
-                    ),
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.clearFocus()
+                    }
+                )
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = workoutName ,
+                onValueChange = onWorkoutNameChanged,
+                placeholder = { Text(text = "Number of Reps")},
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Unspecified,
+                    disabledIndicatorColor = Color.Unspecified,
+                    unfocusedIndicatorColor = Color.Unspecified,
+                ),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 ),
@@ -142,24 +158,38 @@ fun WorkoutEntryScreenContent(
             )
         }
 
-        Column(verticalArrangement = Arrangement.Bottom) {
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(54.dp)
                     .height(54.dp),
                 onClick = {
-                    onSaveClicked(
-                        WorkoutLogModel().apply {
-                            this.exerciseName = uistate.toString()
-                        }
-                    )
-                }
+                    if (uiState.workoutName.isNullOrBlank() && uiState.workoutType.name.isNotEmpty()) {
+                        onSavedClicked(
+                            WorkoutLogModel().apply {
+                                this.workoutName = uiState.workoutName.toString()
+                                this.numberOfSets = uiState.numberOfSets.toString()
+                                this.numberOfReps = uiState.numberOfReps.toString()
+                            }
+                        )
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Fields cannot be empty.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                shape = Shapes().small
             ) {
-                Text(text = "hi")
+                Text(text = "Save")
             }
 
         }
     }
 }
-

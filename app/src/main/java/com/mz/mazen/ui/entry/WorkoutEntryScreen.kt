@@ -9,13 +9,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.mz.mazen.data.model.workoutlog_model.WorkoutLogModel
 import com.mz.mazen.data.model.workoutlog_model.WorkoutType
-import com.mz.mazen.ui.workoutlog.WorkoutEntryUiState
 import java.time.ZonedDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WorkoutEntryScreen1(
+fun WorkoutEntryScreen(
     uiState: WorkoutEntryUiState,
     workoutTypeImage: () -> String,
     pagerState: PagerState,
@@ -42,16 +41,20 @@ fun WorkoutEntryScreen1(
             )
         },
         content = {
-            WorkoutEntryScreenContent(
-                uiState,
-                paddingValues = it ,
-                pagerState = pagerState,
-                title = uiState.workoutName ,
-                description = uiState.description ,
-                onTitleChanged = onTitleChanged ,
-                onDescriptionChanged =  onDescriptionChanged,
-                onSaveClicked = onSaveClicked,
-            )
+            uiState.workoutName?.let { it1 ->
+                WorkoutLogEntryContent(
+                    uiState = uiState,
+                    paddingValues = it ,
+                    pagerState = pagerState,
+                    numberOfSets = uiState.numberOfSets,
+                    numberOfReps = uiState.numberOfReps,
+                    workoutName = it1,
+                    onNumberOfSetsChanged = onDescriptionChanged,
+                    onNumberOfRepsChanged =onTitleChanged ,
+                    onWorkoutNameChanged =onDescriptionChanged ,
+                    onSavedClicked = onSaveClicked
+                )
+            }
         }
     )
 }

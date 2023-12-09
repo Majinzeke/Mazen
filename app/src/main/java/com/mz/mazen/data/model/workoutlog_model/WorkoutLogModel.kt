@@ -18,8 +18,8 @@ open class WorkoutLogModel: RealmObject{
     var workoutName: String = ""
     var workoutType: String = WorkoutType.EmptyWorkout.name
     var exerciseName: String = ""
-    var numberOfReps: Int = 0
-    var numberOfSets: Int = 0
+    var numberOfReps: String = ""
+    var numberOfSets: String = ""
     ///var rateOfPerceivedExertion: Int = 2
     @RequiresApi(Build.VERSION_CODES.O)
     var date: RealmInstant = Instant.now().toRealmInstant()
